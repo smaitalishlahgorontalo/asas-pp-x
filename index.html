@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CBT ASAS Ganjil 2026/2027 - SMA Islam Terpadu Al Ishlah Gorontalo</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    /* Izinkan seleksi teks hanya pada input/textarea */
+    input, textarea {
+      -webkit-user-select: text;
+      user-select: text;
+    }
+    /* Custom scrollbar lembut */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+  <!-- =====================================================================
+       OVERLAY LOADING GLOBAL (Saat Fetch Data Awal / Mengirim Jawaban)
+  ====================================================================== -->
+  <div id="globalLoader" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-200">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center border border-slate-100">
+      <div class="w-12 h-12 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin mx-auto mb-4"></div>
+      <h3 id="loaderTitle" class="text-base font-bold text-slate-900">Memuat Data Ujian...</h3>
+      <p id="loaderSubtitle" class="text-xs text-slate-500 mt-1">Menghubungkan ke server sekolah, mohon tunggu sebentar.</p>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL DIALOG KUSTOM (Konfirmasi Kumpul / Peringatan Anti-Curang / Info)
+  ====================================================================== -->
+  <div id="customModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100 transform transition-all">
+      <div id="modalHeaderBar" class="h-1.5 bg-brand-600 w-full"></div>
+      <div class="p-6">
+        <div class="flex items-start gap-3.5">
+          <div id="modalIconWrap" class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
+            <!-- Ikon diisi dinamis -->
+          </div>
+          <div class="flex-1">
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-900 leading-snug">Konfirmasi</h3>
+            <div id="modalBody" class="text-sm text-slate-600 mt-1.5 leading-relaxed"></div>
+          </div>
+        </div>
+        <div id="modalActions" class="mt-6 flex items-center justify-end gap-2.5">
+          <!-- Tombol aksi diisi dinamis -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       HALAMAN 1: LOGIN PESERTA UJIAN
+  ====================================================================== -->
+  <main id="loginView" class="flex-1 flex items-center justify-center p-4 sm:p-6">
+    <div class="w-full max-w-lg bg-white rounded-3xl shadow-xl shadow-slate-200/70 border border-slate-100 overflow-hidden">
+      <!-- Banner Atas -->
+      <div class="bg-gradient-to-br from-brand-800 via-brand-700 to-emerald-600 px-6 py-7 text-white text-center relative overflow-hidden">
+        <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
+        <div class="absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-black/10 blur-xl"></div>
+
+        <!-- Logo Sekolah dengan Fallback -->
+        <div class="w-20 h-20 mx-auto mb-3.5 rounded-2xl bg-white p-2 shadow-lg flex items-center justify-center relative z-10">
+          <img
+            src="https://iili.io/Ce8iqts.png"
+            alt="Logo SMA Islam Terpadu Al Ishlah Gorontalo"
+            class="w-full h-full object-contain"
+            onerror="this.style.display='none'; document.getElementById('loginLogoFallback').classList.remove('hidden');"
+          />
+          <div id="loginLogoFallback" class="hidden w-full h-full rounded-xl bg-brand-50 text-brand-700 flex flex-col items-center justify-center font-extrabold text-xs tracking-tight">
+            <span>SMA IT</span>
+            <span class="text-[10px] font-semibold text-brand-600">AL ISHLAH</span>
+          </div>
+        </div>
+
+        <p class="text-xs font-semibold uppercase tracking-widest text-brand-100 relative z-10">
+          Computer-Based Test (CBT)
+        </p>
+        <h1 class="text-lg sm:text-xl font-extrabold mt-1 leading-snug relative z-10">
+          SMA Islam Terpadu Al Ishlah Gorontalo
+        </h1>
+        <p class="text-xs sm:text-sm text-brand-100 mt-1 relative z-10">
+          Asesmen Sumatif Akhir Semester (ASAS) Ganjil 2026/2027
+        </p>
+      </div>
+
+      <!-- Form Login -->
+      <div class="p-6 sm:p-8 space-y-5">
+        <!-- Info Ringkas Ujian -->
+        <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/70 text-xs">
+          <div>
+            <span class="text-slate-400 block">Kelas / Fase</span>
+            <span class="font-bold text-slate-800">Kelas X / Fase E</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">Alokasi Waktu</span>
+            <span class="font-bold text-slate-800">60 Menit (25 Soal)</span>
+          </div>
+        </div>
+
+        <!-- Status Koneksi Server -->
+        <div id="serverStatusBadge" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800">
+          <span class="flex items-center gap-2 font-medium">
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <span id="serverStatusText">Menghubungkan ke database siswa...</span>
+          </span>
+          <button type="button" onclick="fetchInitialData()" class="underline font-semibold hover:text-amber-950">Muat Ulang</button>
+        </div>
+
+        <!-- Pencarian & Pilih Nama Siswa -->
+        <div class="space-y-1.5 relative">
+          <label for="studentSearchInput" class="block text-xs font-bold uppercase tracking-wider text-slate-600">
+            Nama Peserta Didik <span class="text-rose-500">*</span>
+          </label>
+          <div class="relative">
+            <input
+              type="text"
+              id="studentSearchInput"
+              autocomplete="off"
+              placeholder="Ketik atau pilih nama Anda..."
+              class="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-300 bg-white text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"
+            />
+            <!-- Ikon Search -->
+            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+            </svg>
+            <!-- Tombol Clear -->
+            <button
+              type="button"
+              id="clearStudentBtn"
+              onclick="clearStudentSelection()"
+              class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+              title="Hapus pilihan"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <!-- Dropdown Hasil Pencarian Siswa -->
+          <div id="studentDropdownList" class="hidden absolute z-30 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-52 overflow-y-auto divide-y divide-slate-100">
+            <!-- Diisi otomatis via JS -->
+          </div>
+          <input type="hidden" id="selectedStudentValue" value="" />
+        </div>
+
+        <!-- Dropdown Mata Pelajaran -->
+        <div class="space-y-1.5">
+          <label for="subjectSelect" class="block text-xs font-bold uppercase tracking-wider text-slate-600">
+            Mata Pelajaran <span class="text-rose-500">*</span>
+          </label>
+          <select
+            id="subjectSelect"
+            class="w-full px-3.5 py-3 rounded-xl border border-slate-300 bg-white text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"
+          >
+            <option value="Pendidikan Pancasila">Pendidikan Pancasila (Kelas X / Fase E)</option>
+          </select>
+        </div>
+
+        <!-- Tata Tertib Singkat -->
+        <div class="bg-brand-50/70 border border-brand-200/80 rounded-2xl p-3.5 text-xs text-brand-900 space-y-1.5">
+          <p class="font-bold flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Petunjuk & Tata Tertib Ujian:
+          </p>
+          <ul class="list-disc list-inside space-y-0.5 text-brand-800/90 pl-1">
+            <li>Berdoalah sebelum memulai mengerjakan soal dengan jujur.</li>
+            <li>Dilarang berpindah tab atau keluar dari aplikasi selama ujian berlangsung.</li>
+            <li>Jawaban tersimpan otomatis di perangkat Anda setiap kali dipilih.</li>
+          </ul>
+        </div>
+
+        <!-- Tombol Mulai -->
+        <button
+          type="button"
+          id="startExamBtn"
+          onclick="handleStartExam()"
+          class="w-full py-3.5 px-5 rounded-xl bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-bold text-sm shadow-lg shadow-brand-600/25 transition flex items-center justify-center gap-2"
+        >
+          <span>Mulai Ujian Sekarang</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- =====================================================================
+       HALAMAN 2: RUANG UJIAN CBT AKTIF
+  ====================================================================== -->
+  <div id="examView" class="hidden flex-1 flex flex-col">
+    <!-- Header Sticky Ujian -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+        <!-- Kiri: Logo & Identitas Sekolah -->
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-100 p-1 flex items-center justify-center shrink-0">
+            <img
+              src="https://iili.io/Ce8iqts.png"
+              alt="Logo Sekolah"
+              class="w-full h-full object-contain"
+              onerror="this.style.display='none'; document.getElementById('headerLogoFallback').classList.remove('hidden');"
+            />
+            <span id="headerLogoFallback" class="hidden text-[10px] font-extrabold text-brand-700 text-center leading-tight">AL<br>ISHLAH</span>
+          </div>
+          <div class="min-w-0">
+            <h2 class="text-xs sm:text-sm font-extrabold text-slate-900 truncate">
+              SMA Islam Terpadu Al Ishlah Gorontalo
+            </h2>
+            <p class="text-[11px] text-slate-500 truncate">
+              <span id="headerSubjectLabel" class="font-semibold text-brand-700">Pendidikan Pancasila</span> • Kelas X/Fase E
+            </p>
+          </div>
+        </div>
+
+        <!-- Kanan: Info Siswa, Timer & Tombol Daftar Soal Mobile -->
+        <div class="flex items-center gap-2.5 sm:gap-4 shrink-0">
+          <div class="hidden md:block text-right">
+            <p id="headerStudentName" class="text-xs font-bold text-slate-800 max-w-[200px] truncate">-</p>
+            <p class="text-[11px] text-slate-400">ASAS Ganjil 2026/2027</p>
+          </div>
+
+          <!-- Timer Hitung Mundur -->
+          <div id="timerBox" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 text-white font-mono text-sm sm:text-base font-bold shadow-sm">
+            <svg class="w-4 h-4 text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span id="timerDisplay">60:00</span>
+          </div>
+
+          <!-- Toggle Drawer Navigasi Mobile -->
+          <button
+            type="button"
+            onclick="toggleMobileNav()"
+            class="lg:hidden p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 relative"
+            title="Navigasi Nomor Soal"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Konten Utama Ujian: 2 Kolom (Area Soal + Panel Navigasi Nomor) -->
+    <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- KOLOM KIRI (8/12): Kartu Butir Soal -->
+      <section class="lg:col-span-8 bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col">
+        <!-- Sub-header Nomor & Tipe Soal -->
+        <div class="px-5 sm:px-7 py-4 bg-slate-50/80 border-b border-slate-200/80 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2.5">
+            <span class="px-3 py-1 rounded-lg bg-brand-600 text-white text-xs sm:text-sm font-extrabold">
+              Soal No. <span id="currentQuestionNum">1</span>
+            </span>
+            <span id="questionTypeBadge" class="px-2.5 py-1 rounded-lg bg-slate-200/80 text-slate-700 text-xs font-semibold">
+              Pilihan Ganda
+            </span>
+          </div>
+          <div class="text-xs text-slate-500 font-medium">
+            Terjawab: <span id="answeredCounterText" class="font-bold text-brand-700">0</span> / <span id="totalQuestionsText">25</span>
+          </div>
+        </div>
+
+        <!-- Isi Stimulus & Pertanyaan -->
+        <div class="p-5 sm:p-7 space-y-6 flex-1">
+          <!-- Gambar Pendukung Soal (Jika Ada) -->
+          <div id="questionImageContainer" class="hidden">
+            <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 p-2 sm:p-3 flex justify-center">
+              <img
+                id="questionImage"
+                src=""
+                alt="Ilustrasi Soal"
+                class="max-h-72 w-auto max-w-full rounded-xl object-contain"
+                onerror="this.parentElement.innerHTML='<p class=\'text-xs text-slate-400 py-4 text-center\'>Gambar ilustrasi soal tidak dapat dimuat.</p>';"
+              />
+            </div>
+          </div>
+
+          <div id="questionStem" class="text-sm sm:text-base text-slate-800 leading-relaxed whitespace-pre-line font-medium">
+            <!-- Teks soal dirender di sini -->
+          </div>
+
+          <!-- Area Opsi Jawaban Dinamis (PG / PG Kompleks / Benar-Salah / Menjodohkan / Isian / Uraian) -->
+          <div id="answerOptionsContainer" class="space-y-3">
+            <!-- Opsi jawaban dirender di sini -->
+          </div>
+        </div>
+
+        <!-- Footer Kontrol Navigasi Soal -->
+        <div class="px-5 sm:px-7 py-4 bg-slate-50 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            id="prevBtn"
+            onclick="navigateQuestion(-1)"
+            class="px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-700 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>Sebelumnya</span>
+          </button>
+
+          <!-- Tombol Ragu-ragu -->
+          <button
+            type="button"
+            id="flagBtn"
+            onclick="toggleFlagCurrent()"
+            class="px-4 py-2.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs sm:text-sm font-bold flex items-center gap-2 transition"
+          >
+            <span id="flagCheckboxVisual" class="w-4 h-4 rounded border border-amber-500 flex items-center justify-center bg-white"></span>
+            <span>Ragu-ragu</span>
+          </button>
+
+          <button
+            type="button"
+            id="nextBtn"
+            onclick="navigateQuestion(1)"
+            class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 transition shadow-sm"
+          >
+            <span id="nextBtnLabel">Selanjutnya</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- KOLOM KANAN (4/12): Panel Navigasi Nomor & Kumpul Ujian -->
+      <aside id="navPanelBackdrop" class="hidden lg:block fixed inset-0 z-40 lg:static lg:z-auto bg-slate-900/50 lg:bg-transparent lg:col-span-4 p-4 lg:p-0 flex items-center justify-center">
+        <div class="bg-white rounded-3xl shadow-xl lg:shadow-sm border border-slate-200/80 w-full max-w-md lg:max-w-none p-5 sm:p-6 space-y-5 max-h-[90vh] overflow-y-auto">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Navigasi Nomor Soal</h3>
+            <button type="button" onclick="toggleMobileNav()" class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Grid Nomor Soal -->
+          <div id="questionGrid" class="grid grid-cols-5 gap-2">
+            <!-- Tombol nomor 1..25 dirender otomatis -->
+          </div>
+
+          <!-- Legenda Warna -->
+          <div class="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-[11px] font-medium text-slate-600">
+            <div class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-emerald-500 inline-block shrink-0"></span>
+              <span>Terjawab</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-amber-400 inline-block shrink-0"></span>
+              <span>Ragu-ragu</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-slate-200 inline-block shrink-0"></span>
+              <span>Kosong</span>
+            </div>
+          </div>
+
+          <!-- Info Pelanggaran Anti-Curang -->
+          <div id="violationBanner" class="hidden px-3.5 py-2.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center justify-between">
+            <span>Catatan pindah tab/layar:</span>
+            <span id="violationCountBadge" class="font-extrabold">0 kali</span>
+          </div>
+
+          <!-- Tombol Kumpulkan Ujian -->
+          <button
+            type="button"
+            onclick="confirmSubmitExam()"
+            class="w-full py-3.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-[0.99] text-white font-bold text-sm shadow-lg shadow-rose-600/20 transition flex items-center justify-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Kumpulkan Ujian</span>
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       HALAMAN 3: BUKTI PENGUMPULAN UJIAN (TANPA MENAMPILKAN SKOR KE SISWA)
+  ====================================================================== -->
+  <section id="receiptView" class="hidden flex-1 flex items-center justify-center p-4 sm:p-6">
+    <div class="w-full max-w-lg bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden text-center">
+      <div class="bg-brand-600 px-6 py-8 text-white">
+        <div class="w-16 h-16 rounded-full bg-white/20 mx-auto flex items-center justify-center mb-4">
+          <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h2 class="text-xl sm:text-2xl font-extrabold">Ujian Berhasil Dikumpulkan!</h2>
+        <p class="text-xs sm:text-sm text-brand-100 mt-1">
+          Jawaban Anda telah tercatat secara aman di server sekolah.
+        </p>
+      </div>
+
+      <div class="p-6 sm:p-8 space-y-5 text-left">
+        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-3 text-xs sm:text-sm">
+          <div class="flex justify-between gap-2 border-b border-slate-200/70 pb-2">
+            <span class="text-slate-500">Sekolah</span>
+            <span class="font-bold text-slate-800 text-right">SMA IT Al Ishlah Gorontalo</span>
+          </div>
+          <div class="flex justify-between gap-2 border-b border-slate-200/70 pb-2">
+            <span class="text-slate-500">Nama Peserta</span>
+            <span id="receiptStudentName" class="font-bold text-slate-800 text-right">-</span>
+          </div>
+          <div class="flex justify-between gap-2 border-b border-slate-200/70 pb-2">
+            <span class="text-slate-500">Mata Pelajaran</span>
+            <span id="receiptSubject" class="font-bold text-slate-800 text-right">-</span>
+          </div>
+          <div class="flex justify-between gap-2 border-b border-slate-200/70 pb-2">
+            <span class="text-slate-500">Waktu Selesai</span>
+            <span id="receiptTimestamp" class="font-bold text-slate-800 text-right">-</span>
+          </div>
+          <div class="flex justify-between gap-2">
+            <span class="text-slate-500">Status Server</span>
+            <span id="receiptServerStatus" class="font-bold text-emerald-600 text-right">Tersimpan</span>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-500 text-center leading-relaxed">
+          Terima kasih telah mengerjakan Asesmen Sumatif Akhir Semester (ASAS) Ganjil 2026/2027 dengan jujur. Anda dapat menutup halaman ini atau kembali ke halaman utama.
+        </p>
+
+        <button
+          type="button"
+          onclick="returnToHome()"
+          class="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition"
+        >
+          Kembali ke Halaman Login
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       SCRIPT LOGIKA UTAMA APLIKASI CBT
+  ====================================================================== -->
+  <script>
+    // =========================================================================
+    // 1. KONFIGURASI BACKEND GOOGLE APPS SCRIPT (GAS)
+    // =========================================================================
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbz5RH_B2vA2nLPtrmHuU2PidC7cL485iZe7vHpgn2y11d0rICU0cvGovoUT0QuZxC5YXg/exec";
+
+    // Identitas Ujian
+    const EXAM_CONFIG = {
+      schoolName: "SMA Islam Terpadu Al Ishlah Gorontalo",
+      examTitle: "Asesmen Sumatif Akhir Semester (ASAS) Ganjil 2026/2027",
+      gradePhase: "Kelas X/Fase E",
+      defaultSubject: "Pendidikan Pancasila",
+      durationMinutes: 60
+    };
+
+    // =========================================================================
+    // 2. BANK SOAL LENGKAP (25 BUTIR SOAL DARI FILE pkn soal.docx)
+    //    Tipe Soal:
+    //    - 'pg'  : Pilihan Ganda Tunggal (Radio Button)
+    //    - 'pgk' : Pilihan Ganda Kompleks (Checkbox Multi-Jawaban)
+    //    - 'bs'  : Benar / Salah Majemuk (Tabel Pernyataan)
+    //    (Juga mendukung 'menjodohkan', 'isian', 'uraian' secara otomatis)
+    // =========================================================================
+    const QUESTION_BANK = [
+      // --- SOAL 1 - 15: PILIHAN GANDA TUNGGAL ---
+      {
+        id: 1,
+        type: "pg",
+        image: "https://iili.io/oqeYcoG.png",
+        stem: "Pada suatu peringatan hari besar keagamaan semua masyarakat menghormati pelaksanaan ibadah dan memberikan kesempatan untuk merayakannya dengan khidmat, sebagaimana toleransi (tasamuh): Menghargai keyakinan dan pelaksanaan ibadah pemeluk agama lain tanpa mengganggu kekhusyukannya. Perilaku tersebut merupakan perwujudan Sila Pertama Pancasila yang penting dilakukan karena….",
+        options: [
+          "membuat masyarakat agar tidak melupakan untuk selalu memperingati hari besar keagamaan",
+          "setiap peringatan hari besar keagamaan harus dilaksanakan dalam suasana damai dan menyenangkan",
+          "menjaga suasana agar tidak terjadi konflik dalam masyarakat pada saat memperingati hari raya",
+          "kebebasan beribadah sesuai agama dan kepercayaan merupakan perwujudan perlindungan HAM",
+          "pemerintah menjaga pelaksanaan peringatan hari besar keagaaman yang mayoritas di masyarakat"
+        ],
+        answer: 3 // D
+      },
+      {
+        id: 2,
+        type: "pg",
+        stem: "Pada awal kemerdekaan Indonesia, terdapat perdebatan tajam tentang dasar negara karena perbedaan keinginan antara negara berdasarkan agama tertentu, paham sekuler, dan sosialisme. Namun pada akhirnya, Pancasila dipilih sebagai dasar dan ideologi negara. Alasan utama Pancasila diterima sebagai ideologi negara dalam situasi keberagaman ideologis tersebut karena Pancasila ….",
+        options: [
+          "menjadi dasar dalam mengambil keputusan oleh para tokoh penting bangsa",
+          "merupakan cita-cita hukum yang harus ditaati oleh seluruh bangsa Indonesia",
+          "mengakui Pancasila sebagai ideologi negara yang telah ditetapkan pendiri bangsa",
+          "manifestasi dari kesepakatan yang telah dirumuskan saat sebelum kemerdekaan",
+          "menunjukkan kepada dunia bahwa ideologi Pancasila dihormati seluruh bangsa Indonesia"
+        ],
+        answer: 3 // D
+      },
+      {
+        id: 3,
+        type: "pg",
+        stem: "Dalam sidang pertama BPUPKI (29 Mei–1 Juni 1945), para pendiri bangsa menyampaikan gagasan mengenai dasar negara bagi Indonesia merdeka. Pada masa itu, muncul perbedaan sudut pandang mengenai bentuk negara, hubungan agama dan negara, hingga rumusan prinsip-prinsip dasar kehidupan bernegara. Namun, seluruh peserta sidang tetap berada dalam satu komitmen besar: mewujudkan kemerdekaan Indonesia dan membangun kesepakatan bersama di atas kepentingan kelompok masing-masing. Pentingnya shura (musyawarah) dan mufakat sebagai tradisi luhur yang sejalan dengan ajaran Islam dalam mengambil keputusan demi maslahat bersama (maslahah mursalah). Sikap para pendiri bangsa dalam menyikapi perbedaan gagasan selama proses perumusan negara merdeka memberikan teladan utama dalam kehidupan berbangsa saat ini, yaitu...",
+        options: [
+          "Menyeragamkan seluruh pandangan politik dan budaya masyarakat agar tidak terjadi perdebatan publik",
+          "Mengutamakan kesepakatan yang inklusif dan kepentingan nasional di atas ego kelompok melalui musyawarah.",
+          "Menunda pengambilan keputusan strategis sampai seluruh pihak memiliki pendapat yang sama persis.",
+          "Memenangkan gagasan tokoh tertentu berdasarkan pengaruh politik dan kedudukannya dalam sidang.",
+          "Memisahkan urusan kebangsaan dari nilai-nilai luhur yang hidup di tengah masyarakat Indonesia."
+        ],
+        answer: 1 // B
+      },
+      {
+        id: 4,
+        type: "pg",
+        stem: "Bagi para pendiri bangsa, \"Indonesia merdeka\" bukan sekadar terbebas dari penjajahan fisik bangsa asing, melainkan juga berdaulat dalam menentukan arah kehidupan, memajukan kesejahteraan umum, mencerdaskan kehidupan bangsa, serta ikut melaksanakan ketertiban dunia. Di era modern, tantangan kemerdekaan juga hadir dalam bentuk ketergantungan teknologi, rendahnya literasi digital, serta melemahnya solidaritas sosial. Makna substansial dari \"negara merdeka\" menurut semangat para pendiri bangsa yang paling relevan untuk dijawab oleh generasi muda masa kini adalah...",
+        options: [
+          "Mengisolasi diri dari pergaulan dan perkembangan ilmu pengetahuan global demi menjaga kemurnian budaya",
+          "Mengukur kemerdekaan semata-mata dari keberhasilan meraih kemerdekaan fisik pada tahun 1945",
+          "Membangun kemandirian, kecakapan berpikir, dan kontribusi nyata bagi kemajuan serta keadilan sosial bangsa",
+          "Menjadikan kebebasan individu sebagai hak tanpa batas yang mengabaikan tanggung jawab sosial",
+          "Menyerahkan seluruh upaya pembangunan negara kepada aparatur pemerintah tanpa keterlibatan warga negara"
+        ],
+        answer: 2 // C
+      },
+      {
+        id: 5,
+        type: "pg",
+        stem: "Setelah masa reses sidang pertama BPUPKI, berbagai usulan, harapan, dan aspirasi mengenai dasar negara masih bermunculan sehingga memerlukan perumusan yang lebih terfokus. Ketua BPUPKI, Dr. Radjiman Wedyodiningrat, kemudian menunjuk sembilan tokoh yang terdiri atas wakil golongan kebangsaan maupun golongan keagamaan—yakni Ir. Soekarno, Drs. Mohammad Hatta, Mr. A.A. Maramis, Abikoesno Tjokrosoejoso, Abdul Kahar Muzakir, H. Agus Salim, Mr. Achmad Soebardjo, K.H. Wahid Hasjim, dan Mr. Mohammad Yamin untuk merumuskan rancangan pembukaan hukum dasar/dasar negara. Pentingnya shura (musyawarah) dan mufakat sebagai tradisi luhur yang sejalan dengan ajaran Islam dalam mengambil keputusan demi maslahat bersama (maslahah mursalah). Pada tanggal 22 Juni 1945, kelompok ini menghasilkan rumusan yang dikenal sebagai Jakarta Charter atau Piagam Jakarta.\nKomposisi anggota Panitia Sembilan yang melibatkan tokoh-tokoh dari beragam latar belakang pandangan dan kelompok menunjukkan bahwa proses perumusan Mukadimah dasar negara dirancang untuk...",
+        options: [
+          "Menetapkan rumusan tunggal yang hanya mewakili suara mayoritas peserta sidang BPUPKI.",
+          "Menampung serta menjembatani berbagai aspirasi elemen bangsa melalui musyawarah untuk mufakat.",
+          "Mengganti seluruh gagasan yang telah disampaikan pada sidang pertama BPUPKI dengan konsep baru dari luar negeri.",
+          "Mempercepat pengambilan keputusan secara sepihak tanpa mempertimbangkan keberagaman elemen masyarakat.",
+          "Membatasi peran golongan keagamaan hanya pada urusan ritual peribadatan semata."
+        ],
+        answer: 1 // B
+      },
+      {
+        id: 6,
+        type: "pg",
+        stem: "Menjelang penetapan Undang-Undang Dasar pada 18 Agustus 1945, muncul masukan dari tokoh-tokoh di wilayah Indonesia bagian timur terkait rumusan kalimat pada sila pertama dalam Piagam Jakarta agar tidak menimbulkan kesan keberatan bagi kelompok pemeluk agama lain. Drs. Mohammad Hatta bersama para tokoh terkait kemudian melakukan komunikasi dan musyawarah secara bijaksana sehingga tercapai kesepakatan perubahan redaksional pada sila pertama menjadi \"Ketuhanan Yang Maha Esa\", yang kemudian termaktub dalam Pembukaan UUD NRI Tahun 1945. Sesuai dengan prinsip laa ikraaha fid-diin (tidak ada paksaan dalam agama) dan penghormatan terhadap hak berkeyakinan.\nNilai utama yang tercermin dari langkah para tokoh bangsa saat menyepakati perubahan redaksional tersebut demi menjaga keutuhan Indonesia adalah...",
+        options: [
+          "Sikap kaku mempertahankan teks awal demi menunjukkan keteguhan pendirian kelompok.",
+          "Kelapangan jiwa, persatuan, dan keutamaan menjaga keutuhan bangsa di atas kepentingan sempit",
+          "Penghapusan nilai ketuhanan dari dasar negara agar seluruh golongan merasa netral.",
+          "Penundaan proklamasi kemerdekaan sampai tercapai keseragaman pandangan di seluruh daerah.",
+          "Pengabaian aspirasi masyarakat daerah demi mempercepat pengesahan konstitusi."
+        ],
+        answer: 1 // B
+      },
+      {
+        id: 7,
+        type: "pg",
+        stem: "Sebagai bagian dari bangsa Indonesia, setiap warga negara menikmati berbagai fasilitas publik, perlindungan hukum, serta kebebasan berekspresi dan berkarya. Namun, di saat yang sama, keberlangsungan kehidupan berbangsa menuntut warga negara untuk membayar pajak sesuai ketentuan, menjaga fasilitas umum, menghormati hak orang lain, serta ikut berpartisipasi aktif memajukan lingkungan dan bangsa. Hal ini sesuai dengan keseimbangan Hak & Kewajiban (Tawazun & Al-Huquq): Menikmati fasilitas dan kebebasan harus diiringi penunaian kewajiban secara adil dan bertanggung jawab.\nHubungan antara hak dan kewajiban warga negara dalam konteks berbangsa yang selaras dengan nilai Pancasila adalah...",
+        options: [
+          "Kewajiban warga negara hanya berlaku bagi aparatur negara, sedangkan warga biasa cukup menuntut haknya",
+          "Hak warga negara dapat dijalankan secara mutlak tanpa perlu diiringi kesadaran memenuhi kewajiban kebangsaan.",
+          "Hak dan kewajiban berjalan secara seimbang dan saling melengkapi demi terwujudnya ketertiban serta keadilan bersama",
+          "Kewajiban membayar pajak dan menaati aturan hanya mengikat warga yang tinggal di wilayah perkotaan.",
+          "Partisipasi warga negara dalam kehidupan berbangsa hanya diperlukan pada saat pemilihan umum berlangsung."
+        ],
+        answer: 2 // C
+      },
+      {
+        id: 8,
+        type: "pg",
+        stem: "Perkembangan media sosial dan kecerdasan buatan memudahkan masyarakat mengakses sekaligus menyebarkan informasi secara instan. Namun, kondisi ini juga memunculkan tantangan berupa maraknya berita bohong (hoaks), hal ini sesuai dengan prinsip tabayyun (meneliti dan memverifikasi kebenaran informasi sebelum membagikannya, sesuai dengan semangat QS. Al-Hujurat: 6) ujaran kebencian berbasis identitas, serta algoritma ruang gema (echo chamber) yang membuat seseorang hanya terpapar pandangan serupa. Akibatnya, perdebatan publik kerap berubah menjadi permusuhan dan mengikis sikap saling menghargai dalam keberagaman.\nFenomena tersebut menunjukkan bahwa tantangan penerapan Pancasila di era digital berkaitan erat dengan...",
+        options: [
+          "Hilangnya seluruh akses komunikasi antarwarga negara akibat keterbatasan jaringan internet.",
+          "Melemahnya literasi digital, empati, dan sikap musyawarah akibat polarisasi informasi di ruang digital.",
+          "Berkurangnya minat generasi muda untuk menggunakan teknologi informasi dalam kegiatan belajar.",
+          "Diterapkannya aturan hukum yang melarang warga negara menyampaikan pendapat di media sosial",
+          "Terhapusnya budaya lokal secara otomatis karena masyarakat hanya mengonsumsi konten luar negeri."
+        ],
+        answer: 1 // B
+      },
+      {
+        id: 9,
+        type: "pg",
+        stem: "Dalam kehidupan bermasyarakat dan berbangsa, nilai-nilai Pancasila sering diuji oleh persoalan nyata seperti intoleransi, ketidakpedulian terhadap lingkungan, serta praktik korupsi atau penyalahgunaan wewenang yang merugikan kepentingan publik. Mengamalkan Pancasila tidak cukup sebatas menghafal butir atau sila, melainkan menuntut pembiasaan sikap dan tindakan nyata dalam keseharian. Hal ini sesuai dengan amal saleh & keselarasan ucapan-tindakan (Shidqul ‘Amal): Iman dan nilai kebaikan tidak cukup diucapkan atau dihafalkan, tetapi harus dibuktikan melalui perbuatan nyata.\nLangkah yang paling tepat untuk menjawab tantangan penerapan Pancasila dalam kehidupan sehari-hari adalah...",
+        options: [
+          "Menjadikan nilai Pancasila sebagai slogan seremonial tanpa mengaitkannya dengan pengambilan keputusan sehari-hari",
+          "Mengandalkan penegakan aturan semata tanpa menumbuhkan kesadaran moral dan keteladanan di lingkungan keluarga, sekolah, dan masyarakat",
+          "Menginternalisasikan nilai ketuhanan, kemanusiaan, persatuan, demokrasi, dan keadilan ke dalam kebiasaan berpikir, bersikap, dan bertindak",
+          "Menghindari keterlibatan dalam kegiatan sosial kemasyarakatan agar tidak berhadapan dengan perbedaan pendapat",
+          "Memprioritaskan kepentingan pribadi atau kelompok terlebih dahulu sebelum mempertimbangkan keadilan bagi sesama"
+        ],
+        answer: 2 // C
+      },
+      {
+        id: 10,
+        type: "pg",
+        stem: "Di sebuah kelurahan, warga dari beragam latar belakang pekerjaan, suku, dan usia sepakat menjalankan program pengelolaan sampah terpadu dan pembersihan saluran air menjelang musim hujan. Warga yang memiliki keahlian teknis membantu merancang bak komposter, sebagian warga menyiapkan alat dan konsumsi bersama, sementara para pemuda dan pelajar mengedukasi tetangga mengenai pemilahan sampah rumah tangga. Semangat gotong royong sesuai dengan konsep ta'awun (tolong-menolong dalam kebaikan dan takwa) serta peran manusia sebagai khalifah fil 'ardh dalam menjaga kemakmuran lingkungan. Program ini berjalan berkelanjutan tanpa membebani satu pihak saja dan membuat lingkungan menjadi lebih bersih serta sehat.\nPraktik gotong royong pada situasi tersebut mencerminkan makna utama gotong royong sebagai...",
+        options: [
+          "Kewajiban kerja paksa bagi warga kurang mampu untuk menggantikan peran pemerintah daerah.",
+          "Kolaborasi sukarela berbasis kepedulian dan pembagian peran yang adil demi kemaslahatan bersama.",
+          "Kegiatan seremonial tahunan yang dilakukan hanya untuk menarik perhatian aparatur pemerintah.",
+          "Wadah persaingan antarwarga untuk menunjukkan siapa yang menyumbang paling banyak materi.",
+          "Upaya menyeragamkan latar belakang sosial dan profesi seluruh warga di lingkungan tersebut."
+        ],
+        answer: 1 // B
+      },
+      {
+        id: 11,
+        type: "pg",
+        stem: "Dalam sejarah perumusan dasar negara, gotong royong dipandang sebagai salah satu jiwa dan kepribadian bangsa Indonesia yang menyatukan berbagai unsur masyarakat. Ketika bangsa menghadapi tantangan bersama seperti pemulihan pascabencana, ketahanan pangan lokal, maupun pencegahan konflik sosial semangat gotong royong yang sesuai dengan konsep ta'awun (tolong-menolong dalam kebaikan dan takwa) serta peran manusia sebagai khalifah fil 'ardh dalam menjaga kemakmuran lingkungan membantu masyarakat bergerak cepat, saling menopang, dan menjaga keutuhan kehidupan berbangsa.\nPeran strategis gotong royong dalam memperkuat kehidupan berbangsa adalah...",
+        options: [
+          "Menggantikan peran hukum dan lembaga negara dalam menyelesaikan seluruh sengketa warga.",
+          "Memperkokoh kohesi sosial dan ketahanan bersama dalam menghadapi tantangan kebangsaan secara kolaboratif.",
+          "Membatasi bantuan sosial hanya kepada kelompok yang memiliki kesamaan suku atau organisasi tertentu.",
+          "Menghilangkan kebutuhan akan musyawarah karena keputusan cukup diambil oleh individu paling berpengaruh",
+          "Menjadikan kepentingan satu daerah lebih utama daripada kepentingan nasional dalam situasi darurat."
+        ],
+        answer: 1 // B
+      },
+      {
+        id: 12,
+        type: "pg",
+        stem: "Zistri adalah siswa SMA yang aktif menyuarakan isu pelestarian lingkungan melalui buletin sekolah dan akun media sosialnya. Suatu hari, ia menulis kritik mengenai pengelolaan sampah di sekitar area publik dengan menyertakan data pengamatan lapangan serta saran perbaikan yang terukur, tanpa menyebarkan informasi palsu maupun menyerang pribadi siapa pun. Di sisi lain, Zistri juga rutin mengikuti piket kebersihan kelas dan menaati aturan jam malam serta ketertiban lingkungan tempat tinggalnya.\nPengalaman sehari-hari Zistri tersebut menunjukkan pemahaman bahwa konstitusi dalam kehidupan nyata...",
+        options: [
+          "Memberikan kebebasan berpendapat tanpa syarat sehingga kritik boleh disampaikan dengan cara apa saja",
+          "Mengharuskan warga negara memilih antara menggunakan hak berekspresi atau menjalankan kewajiban sosial.",
+          "Menyeimbangkan jaminan hak berekspresi dengan sikap bertanggung jawab, tertib aturan, dan kepedulian bersama.",
+          "Hanya berlaku ketika seseorang berurusan dengan lembaga peradilan atau aparat pemerintahan.",
+          "Membatasi hak menyampaikan gagasan hanya bagi warga negara yang telah memiliki usia dewasa."
+        ],
+        answer: 2 // C
+      },
+      {
+        id: 13,
+        type: "pg",
+        stem: "Di sebuah daerah, seorang siswa dari keluarga berpenghasilan rendah tetap berkesempatan menempuh pendidikan dasar dan menengah berkat adanya program bantuan biaya pendidikan serta penyediaan fasilitas sekolah negeri oleh pemerintah. Selain itu, sekolah memberikan ruang yang setara bagi seluruh peserta didik untuk mengembangkan potensi akademik maupun bakat seni tanpa diskriminasi. Sesuai dengan QS. An-Nahl: 90 — Perintah menegakkan keadilan (‘adl) dan berbuat kebaikan (ihsan) dalam kehidupan bermasyarakat.\nPraktik yang dialami peserta didik pada stimulus tersebut berkaitan langsung dengan prinsip konstitusional dalam UUD NRI Tahun 1945 yang mengatur bahwa...",
+        options: [
+          "Pendidikan merupakan layanan komersial yang hanya dapat diakses oleh warga negara yang mampu membayar penuh",
+          "Setiap warga negara berhak mendapat pendidikan, dan pemerintah wajib mengusahakan serta menyelenggarakan sistem pendidikan nasional.",
+          "Kewajiban belajar hanya berlaku bagi peserta didik yang berprestasi di bidang akademik.",
+          "Penyelenggaraan pendidikan diserahkan sepenuhnya kepada pihak swasta tanpa peran anggaran negara.",
+          "Hak memperoleh pendidikan dapat dicabut apabila peserta didik memiliki keterbatasan ekonomi."
+        ],
+        answer: 1 // B
+      },
+      {
+        id: 14,
+        type: "pg",
+        stem: "Di sebuah warung makan, seorang pembeli menyadari bahwa kembalian uang yang diberikan kasir berlebih sebesar lima puluh ribu rupiah karena kasir sedang terburu-buru melayani antrean. Pembeli tersebut segera mengembalikan kelebihan uang itu dengan ramah dan jujur sebelum meninggalkan tempat. Hal ini sesuai dengan nilai kejujuran (siddiq), sifat amanah, serta kesadaran muraqabah (merasa senantiasa diawasi oleh Allah SWT).\nTindakan pembeli pada stimulus tersebut paling tepat menggambarkan kesadaran menjalankan norma yang bersumber dari...",
+        options: [
+          "Norma hukum semata karena ada ancaman pidana penjara bagi siapa pun yang menerima uang berlebih.",
+          "Norma kesopanan saja karena pembeli hanya ingin terlihat ramah di hadapan kasir",
+          "Aturan tertulis negara yang mewajibkan transaksi jual beli selalu disertai berita acara.",
+          "Kebiasaan menunda pengembalian hingga kasir menyadari kesalahannya sendiri.",
+          "Norma kesusilaan dan nilai kejujuran yang hidup dalam hati nurani, sekaligus selaras dengan ajaran agama dan kepatutan sosial."
+        ],
+        answer: 4 // E
+      },
+      {
+        id: 15,
+        type: "pg",
+        stem: "Sebuah keluarga mengadakan acara syukuran di rumah hingga larut malam dengan suara musik yang cukup keras, padahal tetangga di sekitar memiliki bayi dan lansia yang membutuhkan istirahat, serta lingkungan setempat memiliki kesepakatan jam tenang malam hari. Setelah ditegur secara baik-baik oleh pengurus lingkungan, keluarga tersebut mengecilkan volume suara dan meminta maaf.\nRespons keluarga setelah ditegur tersebut mencerminkan sikap yang selaras dengan fungsi norma dalam kehidupan sehari-hari, yaitu…",
+        options: [
+          "Mempertahankan kebebasan pribadi di rumah sendiri tanpa perlu peduli pada kenyamanan warga sekitar.",
+          "Menganggap teguran tetangga sebagai bentuk pelanggaran hak asasi yang harus dilawan secara terbuka",
+          "Mengabaikan kesepakatan lingkungan karena acara tersebut berlangsung di area milik pribadi.",
+          "Menjadikan keramaian sebagai tolok ukur utama keberhasilan sebuah acara keluarga",
+          "Menyelaraskan kebebasan individu dengan kepantasan sosial, empati terhadap sesama, dan kesepakatan bersama."
+        ],
+        answer: 4 // E
+      },
+
+      // --- SOAL 16 - 20: PILIHAN GANDA KOMPLEKS (CHECKBOX MULTI-JAWABAN) ---
+      {
+        id: 16,
+        type: "pgk",
+        stem: "Dalam kehidupan bermasyarakat, warga berinteraksi dalam berbagai situasi—mulai dari menyapa tetangga yang lebih tua, menjaga ketenangan saat waktu ibadah, mengembalikan barang pinjaman tepat waktu, hingga mematuhi rambu lalu lintas dan aturan kepemilikan kendaraan.\nBerdasarkan konteks kehidupan sehari-hari tersebut, tentukan pernyataan mana saja yang BENAR mengenai norma-norma yang berlaku! (Jawaban benar bisa lebih dari satu)",
+        options: [
+          "Norma hukum memiliki sifat memaksa dan sanksi yang tegas serta terukur karena ditetapkan oleh lembaga yang berwenang.",
+          "Pelanggaran norma kesopanan umumnya berkaitan dengan kepantasan dalam pergaulan dan dapat memicu teguran atau penolakan sosial.",
+          "Norma agama dan norma kesusilaan tidak memiliki kaitan dengan sikap jujur, adil, dan menghormati sesama dalam kehidupan sosial.",
+          "Kepatuhan terhadap berbagai norma membantu menciptakan rasa aman, saling menghargai, dan keteraturan dalam kehidupan bersama."
+        ],
+        answer: [0, 1, 3]
+      },
+      {
+        id: 17,
+        type: "pgk",
+        stem: "Dalam kehidupan bertetangga dan bermasyarakat, warga negara menjalankan ibadah sesuai agama dan kepercayaannya masing-masing, menyampaikan pendapat saat rapat lingkungan, serta menjaga kelestarian lingkungan sekitar. Di sisi lain, UUD NRI Tahun 1945 juga menegaskan bahwa dalam menjalankan hak dan kebebasannya, setiap orang wajib tunduk kepada pembatasan yang ditetapkan oleh undang-undang demi menghormati hak orang lain serta memenuhi tuntutan keadilan, ketertiban umum, dan moral.\nBerdasarkan konteks tersebut, tentukan pernyataan mana saja yang BENAR terkait pasal-pasal UUD NRI Tahun 1945 dalam kehidupan sehari-hari! (Jawaban benar bisa lebih dari satu)",
+        options: [
+          "(1) Negara menjamin kemerdekaan tiap-tiap penduduk untuk memeluk agamanya masing-masing dan untuk beribadat menurut agama dan kepercayaannya itu.",
+          "(2) Kebebasan mengemukakan pikiran dan pendapat dimiliki oleh warga negara, namun pelaksanaannya tetap harus menghormati hak serta ketertiban bersama.",
+          "(3) Kebebasan berpendapat dan berekspresi memberi hak kepada seseorang untuk menyebarkan fitnah atau mengganggu ketenangan umum tanpa konsekuensi hukum.",
+          "(4) Setiap orang berhak hidup sejahtera lahir dan batin, bertempat tinggal, serta mendapatkan lingkungan hidup yang baik dan sehat."
+        ],
+        answer: [0, 1, 3]
+      },
+      {
+        id: 18,
+        type: "pgk",
+        stem: "Dalam keseharian, nilai-nilai konstitusi tidak hanya tampak pada pasal-pasal tertulis, tetapi juga pada kebiasaan warga negara memperlakukan sesama secara adil, menghormati perbedaan keyakinan, menjaga keamanan lingkungan, serta berpartisipasi dalam pengambilan keputusan bersama.\nBerdasarkan stimulus tersebut, tentukan pernyataan mana saja yang BENAR mengenai pengenalan konstitusi dalam pengalaman hidup sehari-hari! (Jawaban benar bisa lebih dari satu)",
+        options: [
+          "(1) Menghormati teman yang berbeda agama saat beribadah merupakan wujud penghormatan terhadap hak asasi dan kebebasan beragama yang dijamin konstitusi.",
+          "(2) Mengikuti musyawarah kelas atau rapat warga secara tertib mencerminkan praktik demokrasi dan kesetaraan dalam kehidupan sehari-hari.",
+          "(3) Membuang sampah sembarangan di ruang publik merupakan bentuk kebebasan individu yang dilindungi oleh hukum dasar.",
+          "(4) Mematuhi peraturan lalu lintas dan menjaga fasilitas umum membantu menciptakan ketertiban serta melindungi keselamatan bersama."
+        ],
+        answer: [0, 1, 3]
+      },
+      {
+        id: 19,
+        type: "pgk",
+        stem: "Gotong royong sering dipahami sekadar kerja bakti fisik di lingkungan sekitar. Padahal, dalam kehidupan modern, gotong royong juga dapat diwujudkan melalui solidaritas saat terjadi bencana, penggalangan bantuan pendidikan bagi anak putus sekolah, kolaborasi lintas daerah untuk melestarikan budaya, hingga gerakan berbagi informasi terverifikasi serta membantu sesama dalam ruang digital.\nBerdasarkan stimulus tersebut, tentukan pernyataan mana saja yang BENAR mengenai bentuk dan semangat gotong royong masa kini! (Jawaban benar bisa lebih dari satu)",
+        options: [
+          "(1) Gotong royong tidak terbatas pada aktivitas fisik semata, melainkan dapat hadir dalam bentuk aksi sosial, kolaborasi kreatif, dan kepedulian di ruang digital.",
+          "(2) Semangat gotong royong memperkuat rasa persaudaraan, empati, dan tanggung jawab sosial tanpa memandang perbedaan latar belakang.",
+          "(3) Kemajuan teknologi membuat nilai gotong royong menjadi tidak relevan lagi karena urusan individu dapat diselesaikan sendiri secara daring.",
+          "(4) Inisiatif kolektif warga membantu sesama saat bencana atau kesulitan ekonomi merupakan wujud nyata keadilan sosial dan kemanusiaan."
+        ],
+        answer: [0, 1, 3]
+      },
+      {
+        id: 20,
+        type: "pgk",
+        stem: "Indonesia memiliki populasi usia muda yang besar, kekayaan budaya nusantara, serta semakin terbukanya konektivitas global. Di satu sisi, kondisi ini membuka ruang luas bagi inovasi, kolaborasi lintas daerah maupun lintas bangsa, dan penguatan ekonomi kreatif berbasis kearifan lokal. Di sisi lain, muncul pula tantangan seperti sikap konsumtif dan individualistis, kesenjangan akses teknologi, serta kecenderungan mengabaikan kepentingan bersama demi keuntungan jangka pendek.\nBerdasarkan stimulus tersebut, tentukan pernyataan mana saja yang BENAR terkait peluang dan tantangan penerapan Pancasila! (Jawaban benar bisa lebih dari satu)",
+        options: [
+          "(1) Kreativitas generasi muda dan kekayaan budaya lokal merupakan peluang untuk membumikan nilai gotong royong dan persatuan dalam karya yang relevan dengan zaman.",
+          "(2) Sikap individualistis dan pengabaian kepentingan bersama merupakan tantangan yang perlu diatasi melalui penguatan kesadaran sosial dan keadilan.",
+          "(3) Keterbukaan konektivitas global selalu berdampak negatif sehingga penerapan Pancasila hanya mungkin dilakukan dengan menutup diri dari dunia luar.",
+          "(4) Pemerataan akses digital dan pendidikan menjadi bagian penting agar peluang kemajuan tidak hanya dinikmati segelintir kelompok."
+        ],
+        answer: [0, 1, 3]
+      },
+
+      // --- SOAL 21 - 25: BENAR / SALAH MAJEMUK (TABEL) ---
+      {
+        id: 21,
+        type: "bs",
+        stem: "Dalam kehidupan berbangsa, warga negara dari berbagai latar belakang budaya dan keyakinan hidup berdampingan dalam satu ikatan Negara Kesatuan Republik Indonesia. Ketika muncul perbedaan pandangan terkait isu sosial, kebijakan publik, maupun perayaan tradisi tertentu, cara warga negara merespons perbedaan tersebut sangat menentukan kokoh atau rapuhnya kohesi sosial bangsa.\nBerdasarkan situasi tersebut, tentukan pernyataan benar atau salah berikut!",
+        statements: [
+          "Menempatkan kepentingan persatuan dan keutuhan bangsa di atas sentimen kesukuan, kedaerahan, atau golongan yang sempit",
+          "Menyelesaikan perbedaan pandangan melalui dialog, sikap saling menghormati, dan mekanisme hukum yang berkeadilan",
+          "Menyelesaikan perbedaan pandangan melalui dialog, sikap saling menghormati, dan mekanisme hukum yang berkeadilan"
+        ],
+        answer: ["Benar", "Benar", "Benar"]
+      },
+      {
+        id: 22,
+        type: "bs",
+        stem: "Pentingnya shura (musyawarah) dan mufakat sebagai tradisi luhur yang sejalan dengan ajaran Islam dalam mengambil keputusan demi maslahat bersama (maslahah mursalah). Rancangan Mukadimah (Piagam Jakarta) yang dirumuskan oleh Panitia Sembilan pada 22 Juni 1945 memuat alinea-alinea yang menegaskan pernyataan kemerdekaan, cita-cita negara merdeka yang berdaulat, adil, dan makmur, serta rumusan dasar negara yang tersusun secara sistematis. Dalam proses penyusunannya, para anggota Panitia Sembilan berdialog secara intensif untuk menemukan titik temu agar dasar negara dapat diterima oleh seluruh lapisan rakyat Indonesia.\nBerdasarkan konteks perumusan Mukadimah dasar negara oleh Panitia Sembilan, tentukan pernyataan benar atau salah berikut!",
+        statements: [
+          "Rancangan Mukadimah hasil kerja Panitia Sembilan menjadi titik temu penting yang menjembatani berbagai aspirasi menjelang kemerdekaan",
+          "Semangat kompromi dan toleransi antar-tokoh tampak dalam upaya merumuskan dasar negara yang dapat menyatukan bangsa yang majemuk",
+          "Musyawarah yang dilakukan Panitia Sembilan mencerminkan kematangan sikap kenegarawanan dalam mendahulukan keutuhan bangsa"
+        ],
+        answer: ["Benar", "Benar", "Benar"]
+      },
+      {
+        id: 23,
+        type: "bs",
+        stem: "Dalam sidang BPUPKI, gagasan mengenai Indonesia merdeka dirumuskan melalui berbagai perspektif. Mohammad Yamin menyampaikan usulan baik secara lisan maupun tertulis terkait asas dan dasar negara; Soepomo menekankan konsep negara integralistik (persatuan menyeluruh antara negara dan seluruh lapisan rakyat); sementara Ir. Soekarno pada 1 Juni 1945 mengemukakan sintesis lima prinsip dasar negara yang diberi nama Pancasila serta gagasan mengenai pemerasan sila-sila tersebut.\nBerdasarkan uraian tersebut, tentukan pernyataan benar atau salah!",
+        statements: [
+          "Ide tentang negara merdeka tidak lahir secara instan dari satu orang saja, melainkan melalui diskusi dan penyempurnaan gagasan lintas tokoh.",
+          "Pidato Ir. Soekarno pada 1 Juni 1945 mengakhiri seluruh proses perumusan dasar negara sehingga tidak ada lagi pembahasan lanjutan",
+          "Semangat gotong royong dan kekeluargaan menjadi landasan penting dalam membayangkan corak kehidupan negara Indonesia merdeka"
+        ],
+        answer: ["Benar", "Salah", "Benar"]
+      },
+      {
+        id: 24,
+        type: "bs",
+        stem: "UUD NRI Tahun 1945 mengatur berbagai aspek kehidupan bernegara, mulai dari jaminan hak asasi manusia, kewajiban membela negara, hingga sistem pemerintahan dan pembagian kekuasaan. Pemahaman terhadap pasal-pasal UUD NRI Tahun 1945 membantu warga negara mengetahui batas hak, kewajiban konstitusional, serta mekanisme checks and balances dalam pemerintahan.\nTentukan pernyataan benar atau salah berikut berdasarkan ilustrasi di atas!",
+        statements: [
+          "Pembukaan UUD NRI Tahun 1945 memuat pokok-pokok pikiran yang menjiwai pasal-pasal UUD NRI Tahun 1945",
+          "Hak warga negara bersifat mutlak tanpa batas sehingga dapat dijalankan dengan mengabaikan hak orang lain",
+          "Kekuasaan kehakiman merupakan kekuasaan yang merdeka untuk menyelenggarakan peradilan guna menegakkan hukum dan keadilan"
+        ],
+        answer: ["Benar", "Salah", "Benar"]
+      },
+      {
+        id: 25,
+        type: "bs",
+        stem: "Arus informasi digital yang cepat sering memicu penyebaran hoaks dan ujaran kebencian di media sosial, terutama menjelang agenda publik atau isu sosial tertentu. Di sisi lain, warga negara juga memiliki hak untuk menyampaikan pendapat secara bebas dan bertanggung jawab di ruang publik. Sesuai dengan prinsip tabayyun (meneliti dan memverifikasi kebenaran informasi sebelum membagikannya, sesuai dengan semangat QS. Al-Hujurat: 6).\nBerdasarkan konteks tersebut, tentukan benar atau salah pernyataan berikut!",
+        statements: [
+          "Memverifikasi kebenaran informasi sebelum membagikan ulang agar tidak merugikan pihak lain dan memecah belah persatuan",
+          "Menyampaikan kritik terhadap kebijakan publik secara santun, berbasis fakta, dan melalui saluran yang konstitusional",
+          "Membungkam seluruh kritik masyarakat di ruang digital demi menjaga ketertiban umum tanpa batas"
+        ],
+        answer: ["Benar", "Benar", "Salah"]
+      }
+    ];
+
+    // =========================================================================
+    // 3. STATE APLIKASI & LOCALSTORAGE HELPER
+    // =========================================================================
+    let appState = {
+      students: [],
+      subjects: ["Pendidikan Pancasila"],
+      submittedRecords: [], // Format: ["Nama Siswa||Mata Pelajaran"]
+      currentUser: "",
+      currentSubject: "Pendidikan Pancasila",
+      shuffledQuestions: [],
+      currentIndex: 0,
+      answers: {},       // Key: question.id -> Value sesuai tipe soal
+      flagged: {},       // Key: question.id -> boolean
+      violations: 0,
+      startTimeMs: null,
+      remainingSeconds: EXAM_CONFIG.durationMinutes * 60,
+      timerInterval: null,
+      isExamActive: false,
+      isSubmitting: false
+    };
+
+    // Kunci penyimpanan lokal berbasis siswa & mapel
+    function getStorageKey(student, subject) {
+      const cleanStudent = (student || "").trim().toLowerCase().replace(/\s+/g, "_");
+      const cleanSubject = (subject || "").trim().toLowerCase().replace(/\s+/g, "_");
+      return `cbt_alishlah_2026_${cleanStudent}_${cleanSubject}`;
+    }
+
+    function getSubmittedFlagKey(student, subject) {
+      return `${getStorageKey(student, subject)}_SUBMITTED`;
+    }
+
+    // =========================================================================
+    // 4. INISIALISASI & FETCH DATA DARI GOOGLE APPS SCRIPT
+    // =========================================================================
+    window.addEventListener("DOMContentLoaded", () => {
+      setupStudentCombobox();
+      fetchInitialData();
+      setupAntiCheatListener();
+    });
+
+    async function fetchInitialData() {
+      showLoader("Memuat Daftar Peserta...", "Mengambil data siswa dan mata pelajaran dari server sekolah.");
+      const statusBadge = document.getElementById("serverStatusBadge");
+      const statusText = document.getElementById("serverStatusText");
+
+      // Cek apakah GAS_URL sudah diisi
+      if (!GAS_URL || GAS_URL === "MASUKKAN_URL_WEB_APP_GAS_DI_SINI") {
+        // Mode siap pakai dengan daftar cadangan jika URL GAS belum dikonfigurasi
+        appState.students = [
+          "Ahmad Fauzan Al-Farisi",
+          "Aisyah Humaira Putri",
+          "Muhammad Rizky Pratama",
+          "Siti Nurhaliza Rahman",
+          "Zistri Zahra Nabila"
+        ];
+        appState.subjects = ["Pendidikan Pancasila"];
+        populateSubjectsDropdown(appState.subjects);
+
+        statusBadge.className = "flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800";
+        statusText.innerHTML = "URL GAS belum diatur (Mode Simulasi Lokal aktif).";
+        hideLoader();
+        return;
+      }
+
+      try {
+        const response = await fetch(GAS_URL, { method: "GET" });
+        if (!response.ok) throw new Error("HTTP Error " + response.status);
+        const data = await response.json();
+
+        // Mendukung berbagai format JSON umum dari GAS ({ siswa: [...], mapel: [...], submitted: [...] })
+        const rawStudents = data.siswa || data.students || data.nama_siswa || [];
+        const rawSubjects = data.mapel || data.subjects || data.mata_pelajaran || [];
+        const rawSubmitted = data.submitted || data.sudah_ujian || [];
+
+        appState.students = Array.isArray(rawStudents) ? rawStudents.filter(Boolean) : [];
+        appState.subjects = Array.isArray(rawSubjects) && rawSubjects.length > 0
+          ? rawSubjects.filter(Boolean)
+          : ["Pendidikan Pancasila"];
+        appState.submittedRecords = Array.isArray(rawSubmitted) ? rawSubmitted : [];
+
+        populateSubjectsDropdown(appState.subjects);
+
+        statusBadge.className = "flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800";
+        statusText.innerHTML = `Terhubung (${appState.students.length} siswa terdaftar).`;
+      } catch (err) {
+        console.error("Gagal mengambil data dari GAS:", err);
+        statusBadge.className = "flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800";
+        statusText.innerHTML = "Gagal memuat daftar dari server. Periksa koneksi / URL GAS.";
+      } finally {
+        hideLoader();
+      }
+    }
+
+    function populateSubjectsDropdown(subjects) {
+      const select = document.getElementById("subjectSelect");
+      select.innerHTML = "";
+      subjects.forEach((subj) => {
+        const opt = document.createElement("option");
+        opt.value = subj;
+        opt.textContent = subj;
+        if (subj.toLowerCase().includes("pancasila")) {
+          opt.selected = true;
+        }
+        select.appendChild(opt);
+      });
+    }
+
+    // =========================================================================
+    // 5. COMBOBOX PENCARIAN NAMA SISWA
+    // =========================================================================
+    function setupStudentCombobox() {
+      const searchInput = document.getElementById("studentSearchInput");
+      const dropdown = document.getElementById("studentDropdownList");
+      const hiddenVal = document.getElementById("selectedStudentValue");
+      const clearBtn = document.getElementById("clearStudentBtn");
+
+      function renderDropdown(filterText = "") {
+        const query = filterText.trim().toLowerCase();
+        const filtered = appState.students.filter((name) =>
+          name.toLowerCase().includes(query)
+        );
+
+        dropdown.innerHTML = "";
+        if (filtered.length === 0) {
+          dropdown.innerHTML = `<div class="px-4 py-3 text-xs text-slate-400 text-center">Nama tidak ditemukan</div>`;
+        } else {
+          filtered.forEach((name) => {
+            const item = document.createElement("button");
+            item.type = "button";
+            item.className = "w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-brand-50 hover:text-brand-800 font-medium transition flex items-center justify-between";
+            item.innerHTML = `<span>${escapeHtml(name)}</span>`;
+            item.onclick = () => {
+              searchInput.value = name;
+              hiddenVal.value = name;
+              clearBtn.classList.remove("hidden");
+              dropdown.classList.add("hidden");
+            };
+            dropdown.appendChild(item);
+          });
+        }
+        dropdown.classList.remove("hidden");
+      }
+
+      searchInput.addEventListener("focus", () => renderDropdown(searchInput.value));
+      searchInput.addEventListener("input", () => {
+        hiddenVal.value = "";
+        clearBtn.classList.toggle("hidden", searchInput.value.length === 0);
+        renderDropdown(searchInput.value);
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.classList.add("hidden");
+        }
+      });
+    }
+
+    function clearStudentSelection() {
+      document.getElementById("studentSearchInput").value = "";
+      document.getElementById("selectedStudentValue").value = "";
+      document.getElementById("clearStudentBtn").classList.add("hidden");
+      document.getElementById("studentSearchInput").focus();
+    }
+
+    // =========================================================================
+    // 6. VALIDASI LOGIN & MULAI UJIAN
+    // =========================================================================
+    function handleStartExam() {
+      const selectedName = document.getElementById("selectedStudentValue").value.trim();
+      const typedName = document.getElementById("studentSearchInput").value.trim();
+      const subject = document.getElementById("subjectSelect").value;
+
+      // Pastikan nama valid dari daftar
+      const matchedStudent = appState.students.find(
+        (s) => s.toLowerCase() === (selectedName || typedName).toLowerCase()
+      );
+
+      if (!matchedStudent) {
+        showCustomModal({
+          type: "warning",
+          title: "Nama Belum Dipilih",
+          message: "Silakan pilih nama Anda terlebih dahulu dari daftar peserta didik yang tersedia.",
+          buttons: [{ label: "Mengerti", primary: true }]
+        });
+        return;
+      }
+
+      // Validasi apakah siswa sudah pernah mengumpulkan ujian pada mapel yang sama
+      const alreadySubmittedLocal = localStorage.getItem(getSubmittedFlagKey(matchedStudent, subject)) === "true";
+      const alreadySubmittedServer = appState.submittedRecords.some((rec) => {
+        if (typeof rec === "string") {
+          return rec.toLowerCase() === `${matchedStudent}||${subject}`.toLowerCase();
+        }
+        if (rec && typeof rec === "object") {
+          const rName = (rec.nama || rec.nama_siswa || "").toLowerCase();
+          const rSubj = (rec.mapel || rec.mata_pelajaran || "").toLowerCase();
+          return rName === matchedStudent.toLowerCase() && rSubj === subject.toLowerCase();
+        }
+        return false;
+      });
+
+      if (alreadySubmittedLocal || alreadySubmittedServer) {
+        showCustomModal({
+          type: "danger",
+          title: "Akses Ujian Ditolak",
+          message: `Peserta atas nama <strong>${escapeHtml(matchedStudent)}</strong> tercatat <strong>sudah mengumpulkan ujian</strong> untuk mata pelajaran <strong>${escapeHtml(subject)}</strong> dan tidak dapat mengerjakan ulang.`,
+          buttons: [{ label: "Tutup", primary: true }]
+        });
+        return;
+      }
+
+      // Mulai atau lanjutkan sesi dari localStorage
+      initExamSession(matchedStudent, subject);
+    }
+
+    function initExamSession(studentName, subject) {
+      appState.currentUser = studentName;
+      appState.currentSubject = subject;
+      appState.isExamActive = true;
+      appState.isSubmitting = false;
+
+      const storageKey = getStorageKey(studentName, subject);
+      const savedRaw = localStorage.getItem(storageKey);
+
+      if (savedRaw) {
+        try {
+          const saved = JSON.parse(savedRaw);
+          // Pulihkan urutan soal yang sudah diacak sebelumnya
+          const orderIds = saved.questionOrder || [];
+          const restoredQuestions = orderIds
+            .map((id) => QUESTION_BANK.find((q) => q.id === id))
+            .filter(Boolean);
+
+          appState.shuffledQuestions =
+            restoredQuestions.length === QUESTION_BANK.length
+              ? restoredQuestions
+              : shuffleArray([...QUESTION_BANK]);
+          appState.answers = saved.answers || {};
+          appState.flagged = saved.flagged || {};
+          appState.violations = saved.violations || 0;
+          appState.startTimeMs = saved.startTimeMs || Date.now();
+          appState.remainingSeconds =
+            typeof saved.remainingSeconds === "number"
+              ? saved.remainingSeconds
+              : EXAM_CONFIG.durationMinutes * 60;
+          appState.currentIndex = saved.currentIndex || 0;
+        } catch (e) {
+          setupFreshExamState();
+        }
+      } else {
+        setupFreshExamState();
+      }
+
+      saveProgressToLocalStorage();
+
+      // Update UI Header Ujian
+      document.getElementById("headerStudentName").textContent = appState.currentUser;
+      document.getElementById("headerSubjectLabel").textContent = appState.currentSubject;
+      document.getElementById("totalQuestionsText").textContent = appState.shuffledQuestions.length;
+
+      // Beralih tampilan ke Ruang Ujian
+      document.getElementById("loginView").classList.add("hidden");
+      document.getElementById("receiptView").classList.add("hidden");
+      document.getElementById("examView").classList.remove("hidden");
+
+      updateViolationUI();
+      renderQuestionGrid();
+      renderCurrentQuestion();
+      startCountdownTimer();
+    }
+
+    function setupFreshExamState() {
+      appState.shuffledQuestions = shuffleArray([...QUESTION_BANK]);
+      appState.answers = {};
+      appState.flagged = {};
+      appState.violations = 0;
+      appState.startTimeMs = Date.now();
+      appState.remainingSeconds = EXAM_CONFIG.durationMinutes * 60;
+      appState.currentIndex = 0;
+    }
+
+    function saveProgressToLocalStorage() {
+      if (!appState.currentUser || !appState.currentSubject) return;
+      const storageKey = getStorageKey(appState.currentUser, appState.currentSubject);
+      const payload = {
+        questionOrder: appState.shuffledQuestions.map((q) => q.id),
+        answers: appState.answers,
+        flagged: appState.flagged,
+        violations: appState.violations,
+        startTimeMs: appState.startTimeMs,
+        remainingSeconds: appState.remainingSeconds,
+        currentIndex: appState.currentIndex
+      };
+      localStorage.setItem(storageKey, JSON.stringify(payload));
+    }
+
+    // =========================================================================
+    // 7. TIMER HITUNG MUNDUR & AUTO-SUBMIT
+    // =========================================================================
+    function startCountdownTimer() {
+      if (appState.timerInterval) clearInterval(appState.timerInterval);
+      updateTimerDisplay();
+
+      appState.timerInterval = setInterval(() => {
+        if (!appState.isExamActive) return;
+
+        appState.remainingSeconds -= 1;
+        saveProgressToLocalStorage();
+        updateTimerDisplay();
+
+        if (appState.remainingSeconds <= 0) {
+          clearInterval(appState.timerInterval);
+          appState.remainingSeconds = 0;
+          updateTimerDisplay();
+          submitExamData(true); // Kumpul otomatis saat waktu habis
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(Math.max(0, appState.remainingSeconds) / 60);
+      const secs = Math.max(0, appState.remainingSeconds) % 60;
+      const formatted = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+      const displayEl = document.getElementById("timerDisplay");
+      const boxEl = document.getElementById("timerBox");
+
+      displayEl.textContent = formatted;
+
+      // Peringatan visual jika sisa waktu <= 5 menit
+      if (appState.remainingSeconds <= 300) {
+        boxEl.classList.remove("bg-slate-900");
+        boxEl.classList.add("bg-rose-600", "animate-pulse");
+      } else {
+        boxEl.classList.add("bg-slate-900");
+        boxEl.classList.remove("bg-rose-600", "animate-pulse");
+      }
+    }
+
+    // =========================================================================
+    // 8. RENDER SOAL & NAVIGASI NOMOR
+    // =========================================================================
+    function renderCurrentQuestion() {
+      const q = appState.shuffledQuestions[appState.currentIndex];
+      if (!q) return;
+
+      document.getElementById("currentQuestionNum").textContent = appState.currentIndex + 1;
+
+      // Render gambar jika soal memiliki properti image
+      const imgContainer = document.getElementById("questionImageContainer");
+      if (q.image) {
+        imgContainer.innerHTML = `
+          <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 p-2 sm:p-3 flex justify-center">
+            <img
+              src="${escapeHtml(q.image)}"
+              alt="Ilustrasi Soal No. ${q.id}"
+              class="max-h-72 w-auto max-w-full rounded-xl object-contain"
+              onerror="this.parentElement.innerHTML='<p class=\\'text-xs text-slate-400 py-4 text-center\\'>Gambar ilustrasi soal tidak dapat dimuat.</p>';"
+            />
+          </div>
+        `;
+        imgContainer.classList.remove("hidden");
+      } else {
+        imgContainer.innerHTML = "";
+        imgContainer.classList.add("hidden");
+      }
+
+      document.getElementById("questionStem").textContent = q.stem;
+
+      // Label tipe soal
+      const typeLabels = {
+        pg: "Pilihan Ganda",
+        pgk: "Pilihan Ganda Kompleks (Pilih > 1)",
+        bs: "Benar / Salah",
+        menjodohkan: "Menjodohkan",
+        isian: "Isian Singkat",
+        uraian: "Uraian / Esai"
+      };
+      document.getElementById("questionTypeBadge").textContent = typeLabels[q.type] || "Soal";
+
+      const container = document.getElementById("answerOptionsContainer");
+      container.innerHTML = "";
+
+      if (q.type === "pg") {
+        const letters = ["A", "B", "C", "D", "E"];
+        const currentAns = appState.answers[q.id];
+
+        q.options.forEach((optText, idx) => {
+          const isSelected = currentAns === idx;
+          const label = document.createElement("label");
+          label.className = `flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl border cursor-pointer transition ${
+            isSelected
+              ? "border-brand-600 bg-brand-50/70 ring-1 ring-brand-600"
+              : "border-slate-200 hover:border-brand-300 hover:bg-slate-50"
+          }`;
+          label.innerHTML = `
+            <input type="radio" name="q_${q.id}" class="sr-only" ${isSelected ? "checked" : ""} />
+            <span class="w-7 h-7 rounded-lg text-xs font-extrabold flex items-center justify-center shrink-0 mt-0.5 transition ${
+              isSelected ? "bg-brand-600 text-white" : "bg-slate-100 text-slate-600"
+            }">${letters[idx]}</span>
+            <span class="text-sm text-slate-800 leading-relaxed flex-1">${escapeHtml(optText)}</span>
+          `;
+          label.querySelector("input").addEventListener("change", () => {
+            appState.answers[q.id] = idx;
+            onAnswerUpdated();
+          });
+          container.appendChild(label);
+        });
+      } else if (q.type === "pgk") {
+        const selectedArr = Array.isArray(appState.answers[q.id]) ? appState.answers[q.id] : [];
+
+        q.options.forEach((optText, idx) => {
+          const isChecked = selectedArr.includes(idx);
+          const label = document.createElement("label");
+          label.className = `flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl border cursor-pointer transition ${
+            isChecked
+              ? "border-brand-600 bg-brand-50/70 ring-1 ring-brand-600"
+              : "border-slate-200 hover:border-brand-300 hover:bg-slate-50"
+          }`;
+          label.innerHTML = `
+            <input type="checkbox" class="sr-only" ${isChecked ? "checked" : ""} />
+            <span class="w-6 h-6 rounded-md border flex items-center justify-center shrink-0 mt-0.5 transition ${
+              isChecked ? "bg-brand-600 border-brand-600 text-white" : "bg-white border-slate-300"
+            }">
+              ${
+                isChecked
+                  ? `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>`
+                  : ""
+              }
+            </span>
+            <span class="text-sm text-slate-800 leading-relaxed flex-1">${escapeHtml(optText)}</span>
+          `;
+          label.querySelector("input").addEventListener("change", (e) => {
+            let nextArr = Array.isArray(appState.answers[q.id]) ? [...appState.answers[q.id]] : [];
+            if (e.target.checked) {
+              if (!nextArr.includes(idx)) nextArr.push(idx);
+            } else {
+              nextArr = nextArr.filter((item) => item !== idx);
+            }
+            nextArr.sort((a, b) => a - b);
+            if (nextArr.length > 0) {
+              appState.answers[q.id] = nextArr;
+            } else {
+              delete appState.answers[q.id];
+            }
+            onAnswerUpdated();
+          });
+          container.appendChild(label);
+        });
+      } else if (q.type === "bs") {
+        const currentTableAns = Array.isArray(appState.answers[q.id])
+          ? appState.answers[q.id]
+          : new Array(q.statements.length).fill(null);
+
+        const tableWrap = document.createElement("div");
+        tableWrap.className = "overflow-x-auto rounded-2xl border border-slate-200";
+        let rowsHtml = "";
+
+        q.statements.forEach((stmt, idx) => {
+          const val = currentTableAns[idx];
+          rowsHtml += `
+            <tr class="border-t border-slate-200 hover:bg-slate-50/70">
+              <td class="p-3.5 text-xs sm:text-sm text-slate-800 leading-relaxed">${escapeHtml(stmt)}</td>
+              <td class="p-3 text-center w-24">
+                <label class="inline-flex items-center justify-center w-full py-2 px-2.5 rounded-xl border cursor-pointer text-xs font-bold transition ${
+                  val === "Benar"
+                    ? "bg-emerald-600 border-emerald-600 text-white"
+                    : "bg-white border-slate-300 text-slate-600 hover:border-emerald-400"
+                }">
+                  <input type="radio" name="bs_${q.id}_${idx}" value="Benar" class="sr-only" ${val === "Benar" ? "checked" : ""} />
+                  Benar
+                </label>
+              </td>
+              <td class="p-3 text-center w-24">
+                <label class="inline-flex items-center justify-center w-full py-2 px-2.5 rounded-xl border cursor-pointer text-xs font-bold transition ${
+                  val === "Salah"
+                    ? "bg-rose-600 border-rose-600 text-white"
+                    : "bg-white border-slate-300 text-slate-600 hover:border-rose-400"
+                }">
+                  <input type="radio" name="bs_${q.id}_${idx}" value="Salah" class="sr-only" ${val === "Salah" ? "checked" : ""} />
+                  Salah
+                </label>
+              </td>
+            </tr>
+          `;
+        });
+
+        tableWrap.innerHTML = `
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 text-xs uppercase tracking-wider">
+                <th class="p-3.5 font-bold">Pernyataan</th>
+                <th class="p-3 font-bold text-center">Benar</th>
+                <th class="p-3 font-bold text-center">Salah</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        `;
+
+        tableWrap.querySelectorAll("input[type='radio']").forEach((radio) => {
+          radio.addEventListener("change", (e) => {
+            const parts = e.target.name.split("_");
+            const rowIdx = parseInt(parts[2], 10);
+            const updated = Array.isArray(appState.answers[q.id])
+              ? [...appState.answers[q.id]]
+              : new Array(q.statements.length).fill(null);
+            updated[rowIdx] = e.target.value;
+            appState.answers[q.id] = updated;
+            onAnswerUpdated();
+          });
+        });
+
+        container.appendChild(tableWrap);
+      } else if (q.type === "isian" || q.type === "uraian") {
+        const currentText = appState.answers[q.id] || "";
+        const field = document.createElement(q.type === "uraian" ? "textarea" : "input");
+        if (q.type === "isian") field.type = "text";
+        if (q.type === "uraian") field.rows = 5;
+        field.value = currentText;
+        field.placeholder = q.type === "uraian" ? "Tuliskan jawaban uraian Anda secara lengkap dan jelas..." : "Ketik jawaban singkat Anda...";
+        field.className = "w-full p-4 rounded-2xl border border-slate-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500";
+        field.addEventListener("input", (e) => {
+          const val = e.target.value;
+          if (val.trim().length > 0) {
+            appState.answers[q.id] = val;
+          } else {
+            delete appState.answers[q.id];
+          }
+          saveProgressToLocalStorage();
+          renderQuestionGrid();
+          updateAnsweredCount();
+        });
+        container.appendChild(field);
+      }
+
+      // Perbarui status tombol Ragu-ragu
+      const isFlagged = !!appState.flagged[q.id];
+      const flagVisual = document.getElementById("flagCheckboxVisual");
+      if (isFlagged) {
+        flagVisual.innerHTML = `<svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>`;
+      } else {
+        flagVisual.innerHTML = "";
+      }
+
+      // Perbarui tombol Sebelumnya & Selanjutnya
+      document.getElementById("prevBtn").disabled = appState.currentIndex === 0;
+      const isLast = appState.currentIndex === appState.shuffledQuestions.length - 1;
+      document.getElementById("nextBtnLabel").textContent = isLast ? "Selesai & Cek" : "Selanjutnya";
+
+      renderQuestionGrid();
+      updateAnsweredCount();
+    }
+
+    function onAnswerUpdated() {
+      saveProgressToLocalStorage();
+      renderCurrentQuestion();
+    }
+
+    function navigateQuestion(delta) {
+      const nextIdx = appState.currentIndex + delta;
+      if (nextIdx >= 0 && nextIdx < appState.shuffledQuestions.length) {
+        appState.currentIndex = nextIdx;
+        saveProgressToLocalStorage();
+        renderCurrentQuestion();
+      } else if (nextIdx >= appState.shuffledQuestions.length) {
+        confirmSubmitExam();
+      }
+    }
+
+    function jumpToQuestion(idx) {
+      appState.currentIndex = idx;
+      saveProgressToLocalStorage();
+      renderCurrentQuestion();
+      // Tutup drawer mobile jika terbuka
+      const backdrop = document.getElementById("navPanelBackdrop");
+      if (!backdrop.classList.contains("hidden") && window.innerWidth < 1024) {
+        backdrop.classList.add("hidden");
+      }
+    }
+
+    function toggleFlagCurrent() {
+      const q = appState.shuffledQuestions[appState.currentIndex];
+      if (!q) return;
+      appState.flagged[q.id] = !appState.flagged[q.id];
+      saveProgressToLocalStorage();
+      renderCurrentQuestion();
+    }
+
+    function isQuestionAnswered(q) {
+      const ans = appState.answers[q.id];
+      if (ans === undefined || ans === null) return false;
+      if (q.type === "pg") return typeof ans === "number";
+      if (q.type === "pgk") return Array.isArray(ans) && ans.length > 0;
+      if (q.type === "bs") return Array.isArray(ans) && ans.every((item) => item === "Benar" || item === "Salah");
+      if (typeof ans === "string") return ans.trim().length > 0;
+      return false;
+    }
+
+    function renderQuestionGrid() {
+      const grid = document.getElementById("questionGrid");
+      grid.innerHTML = "";
+
+      appState.shuffledQuestions.forEach((q, idx) => {
+        const answered = isQuestionAnswered(q);
+        const flagged = !!appState.flagged[q.id];
+        const isCurrent = idx === appState.currentIndex;
+
+        // Warna: Kuning = Ragu-ragu, Hijau = Terjawab, Abu-abu = Belum dijawab
+        let colorClass = "bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200";
+        if (flagged) {
+          colorClass = "bg-amber-400 text-amber-950 hover:bg-amber-500 border-amber-500";
+        } else if (answered) {
+          colorClass = "bg-emerald-500 text-white hover:bg-emerald-600 border-emerald-600";
+        }
+
+        const ringClass = isCurrent ? "ring-2 ring-offset-2 ring-slate-900 scale-105" : "";
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = idx + 1;
+        btn.className = `h-10 rounded-xl border text-xs font-extrabold transition ${colorClass} ${ringClass}`;
+        btn.onclick = () => jumpToQuestion(idx);
+        grid.appendChild(btn);
+      });
+    }
+
+    function updateAnsweredCount() {
+      const count = appState.shuffledQuestions.filter(isQuestionAnswered).length;
+      document.getElementById("answeredCounterText").textContent = count;
+    }
+
+    function toggleMobileNav() {
+      const backdrop = document.getElementById("navPanelBackdrop");
+      backdrop.classList.toggle("hidden");
+    }
+
+    // =========================================================================
+    // 9. FITUR ANTI-CURANG (VISIBILITYCHANGE)
+    // =========================================================================
+    function setupAntiCheatListener() {
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden && appState.isExamActive && !appState.isSubmitting) {
+          appState.violations += 1;
+          saveProgressToLocalStorage();
+          updateViolationUI();
+
+          showCustomModal({
+            type: "warning",
+            title: "Peringatan Integritas Ujian",
+            message: `Anda terdeteksi meninggalkan halaman ujian atau berpindah tab (<strong>Pelanggaran ke-${appState.violations}</strong>). Aktivitas ini dicatat otomatis oleh sistem. Mohon tetap fokus pada halaman ujian.`,
+            buttons: [{ label: "Saya Mengerti & Lanjutkan", primary: true }]
+          });
+        }
+      });
+    }
+
+    function updateViolationUI() {
+      const banner = document.getElementById("violationBanner");
+      const badge = document.getElementById("violationCountBadge");
+      if (appState.violations > 0) {
+        banner.classList.remove("hidden");
+        badge.textContent = `${appState.violations} kali`;
+      } else {
+        banner.classList.add("hidden");
+      }
+    }
+
+    // =========================================================================
+    // 10. PENILAIAN OTOMATIS & PENGIRIMAN DATA KE GOOGLE APPS SCRIPT
+    // =========================================================================
+    function calculateObjectiveScoreAndDetails() {
+      let totalPoints = 0;
+      const maxPoints = QUESTION_BANK.length; // Bobot 1 poin per soal -> konversi ke skala 100
+      const detailList = [];
+      const letters = ["A", "B", "C", "D", "E"];
+
+      // Urutkan berdasarkan nomor asli soal (1..25) agar rapi di Spreadsheet guru
+      const sortedOriginal = [...QUESTION_BANK].sort((a, b) => a.id - b.id);
+
+      sortedOriginal.forEach((q) => {
+        const userAns = appState.answers[q.id];
+        let isCorrect = false;
+        let earnedPoint = 0;
+        let formattedStudentAns = "-";
+
+        if (q.type === "pg") {
+          if (typeof userAns === "number") {
+            formattedStudentAns = `${letters[userAns]}. ${q.options[userAns]}`;
+            if (userAns === q.answer) {
+              isCorrect = true;
+              earnedPoint = 1;
+            }
+          }
+        } else if (q.type === "pgk") {
+          if (Array.isArray(userAns) && userAns.length > 0) {
+            formattedStudentAns = userAns.map((i) => `(${i + 1})`).join(", ");
+            const keySorted = [...q.answer].sort((a, b) => a - b);
+            const ansSorted = [...userAns].sort((a, b) => a - b);
+            if (JSON.stringify(keySorted) === JSON.stringify(ansSorted)) {
+              isCorrect = true;
+              earnedPoint = 1;
+            }
+          }
+        } else if (q.type === "bs") {
+          if (Array.isArray(userAns)) {
+            formattedStudentAns = userAns.map((v, i) => `P${i + 1}:${v || "-"}`).join(" | ");
+            let subCorrect = 0;
+            q.answer.forEach((keyVal, idx) => {
+              if (userAns[idx] === keyVal) subCorrect += 1;
+            });
+            earnedPoint = subCorrect / q.answer.length;
+            isCorrect = subCorrect === q.answer.length;
+          }
+        } else if (q.type === "isian") {
+          formattedStudentAns = (userAns || "").toString().trim() || "-";
+          if (q.answer && formattedStudentAns.toLowerCase() === q.answer.toLowerCase()) {
+            isCorrect = true;
+            earnedPoint = 1;
+          }
+        } else if (q.type === "uraian") {
+          // Simpan teks jawaban uraian untuk dikoreksi manual oleh guru di Spreadsheet
+          formattedStudentAns = (userAns || "").toString().trim() || "-";
+          earnedPoint = 0;
+        }
+
+        totalPoints += earnedPoint;
+
+        detailList.push({
+          no_soal: q.id,
+          tipe: q.type,
+          jawaban_siswa: formattedStudentAns,
+          status: q.type === "uraian" ? "Koreksi Manual" : isCorrect ? "Benar" : "Salah",
+          poin: Number(earnedPoint.toFixed(2))
+        });
+      });
+
+      const finalScore100 = Number(((totalPoints / maxPoints) * 100).toFixed(2));
+      return {
+        skorObjektif: finalScore100,
+        detailJawaban: detailList
+      };
+    }
+
+    function confirmSubmitExam() {
+      const answeredCount = appState.shuffledQuestions.filter(isQuestionAnswered).length;
+      const totalCount = appState.shuffledQuestions.length;
+      const unansweredCount = totalCount - answeredCount;
+      const flaggedCount = Object.values(appState.flagged).filter(Boolean).length;
+
+      let warningHtml = `<p>Apakah Anda yakin ingin mengakhiri dan mengumpulkan ujian sekarang?</p>`;
+      warningHtml += `<div class="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+        <div>• Soal terjawab: <strong>${answeredCount} dari ${totalCount} soal</strong></div>
+        <div>• Soal belum dijawab: <strong class="${unansweredCount > 0 ? "text-rose-600" : "text-slate-700"}">${unansweredCount} soal</strong></div>
+        <div>• Ditandai ragu-ragu: <strong class="${flaggedCount > 0 ? "text-amber-600" : "text-slate-700"}">${flaggedCount} soal</strong></div>
+      </div>`;
+
+      showCustomModal({
+        type: "confirm",
+        title: "Konfirmasi Kumpulkan Ujian",
+        message: warningHtml,
+        buttons: [
+          { label: "Periksa Kembali", primary: false },
+          {
+            label: "Ya, Kumpulkan Sekarang",
+            primary: true,
+            onClick: () => submitExamData(false)
+          }
+        ]
+      });
+    }
+
+    async function submitExamData(isAutoTimeout = false) {
+      if (appState.isSubmitting) return;
+      appState.isSubmitting = true;
+      appState.isExamActive = false;
+      if (appState.timerInterval) clearInterval(appState.timerInterval);
+
+      showLoader(
+        isAutoTimeout ? "Waktu Ujian Habis!" : "Mengirim Jawaban...",
+        "Sedang menyimpan lembar jawaban Anda ke server sekolah. Jangan tutup halaman ini."
+      );
+
+      const now = new Date();
+      const timestampStr = now.toLocaleString("id-ID", {
+        dateStyle: "medium",
+        timeStyle: "medium"
+      });
+
+      const totalAllocatedSec = EXAM_CONFIG.durationMinutes * 60;
+      const elapsedSec = Math.max(1, totalAllocatedSec - appState.remainingSeconds);
+      const durationFormatted = `${Math.floor(elapsedSec / 60)} menit ${elapsedSec % 60} detik`;
+
+      const { skorObjektif, detailJawaban } = calculateObjectiveScoreAndDetails();
+
+      const payload = {
+        timestamp: timestampStr,
+        nama_siswa: appState.currentUser,
+        mata_pelajaran: appState.currentSubject,
+        skor_objektif: skorObjektif,
+        detail_jawaban: JSON.stringify(detailJawaban),
+        jumlah_pindah_tab: appState.violations,
+        durasi_pengerjaan: durationFormatted
+      };
+
+      let serverStatusLabel = "Tersimpan di Server Sekolah";
+
+      try {
+        if (GAS_URL && GAS_URL !== "MASUKKAN_URL_WEB_APP_GAS_DI_SINI") {
+          // Kirim menggunakan text/plain agar bebas kendala CORS preflight di Google Apps Script
+          await fetch(GAS_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          serverStatusLabel = "Tersimpan Lokal (URL GAS belum diatur)";
+        }
+      } catch (err) {
+        console.error("Error saat POST ke GAS:", err);
+        serverStatusLabel = "Tersimpan Lokal (Gangguan Jaringan)";
+      }
+
+      // Tandai sudah mengumpulkan agar tidak bisa mengulang
+      localStorage.setItem(getSubmittedFlagKey(appState.currentUser, appState.currentSubject), "true");
+      localStorage.removeItem(getStorageKey(appState.currentUser, appState.currentSubject));
+      appState.submittedRecords.push(`${appState.currentUser}||${appState.currentSubject}`);
+
+      // Isi halaman bukti pengumpulan (TANPA menampilkan skor ke siswa)
+      document.getElementById("receiptStudentName").textContent = appState.currentUser;
+      document.getElementById("receiptSubject").textContent = appState.currentSubject;
+      document.getElementById("receiptTimestamp").textContent = timestampStr;
+      document.getElementById("receiptServerStatus").textContent = serverStatusLabel;
+
+      hideLoader();
+      document.getElementById("examView").classList.add("hidden");
+      document.getElementById("receiptView").classList.remove("hidden");
+    }
+
+    function returnToHome() {
+      clearStudentSelection();
+      document.getElementById("receiptView").classList.add("hidden");
+      document.getElementById("loginView").classList.remove("hidden");
+    }
+
+    // =========================================================================
+    // 11. UTILITAS MODAL KUSTOM, LOADER & HELPER
+    // =========================================================================
+    function showLoader(title, subtitle) {
+      document.getElementById("loaderTitle").textContent = title;
+      document.getElementById("loaderSubtitle").textContent = subtitle;
+      const loader = document.getElementById("globalLoader");
+      loader.classList.remove("hidden");
+      loader.classList.add("flex");
+    }
+
+    function hideLoader() {
+      const loader = document.getElementById("globalLoader");
+      loader.classList.add("hidden");
+      loader.classList.remove("flex");
+    }
+
+    function showCustomModal({ type = "info", title, message, buttons = [] }) {
+      const modal = document.getElementById("customModal");
+      const headerBar = document.getElementById("modalHeaderBar");
+      const iconWrap = document.getElementById("modalIconWrap");
+      const titleEl = document.getElementById("modalTitle");
+      const bodyEl = document.getElementById("modalBody");
+      const actionsEl = document.getElementById("modalActions");
+
+      if (type === "warning") {
+        headerBar.className = "h-1.5 bg-amber-500 w-full";
+        iconWrap.className = "w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0";
+        iconWrap.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+      } else if (type === "danger") {
+        headerBar.className = "h-1.5 bg-rose-600 w-full";
+        iconWrap.className = "w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0";
+        iconWrap.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>`;
+      } else {
+        headerBar.className = "h-1.5 bg-brand-600 w-full";
+        iconWrap.className = "w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center shrink-0";
+        iconWrap.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      }
+
+      titleEl.textContent = title;
+      bodyEl.innerHTML = message;
+      actionsEl.innerHTML = "";
+
+      buttons.forEach((btnCfg) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = btnCfg.label;
+        btn.className = btnCfg.primary
+          ? "px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold transition shadow-sm"
+          : "px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold transition";
+        btn.onclick = () => {
+          closeCustomModal();
+          if (typeof btnCfg.onClick === "function") btnCfg.onClick();
+        };
+        actionsEl.appendChild(btn);
+      });
+
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeCustomModal() {
+      const modal = document.getElementById("customModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
